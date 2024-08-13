@@ -1,0 +1,45 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{C39E5D7C-1562-4593-A5A0-8527286D1BF7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StringZilla.Core", "src\StringZilla.Core\StringZilla.Core.csproj", "{424C1CE4-68A8-46E8-B2E3-8F88165E5C72}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{2DE87239-BCE9-4F95-9E81-0D2B696E1E06}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StringZilla.Core.Tests", "test\StringZilla.Core.Tests\StringZilla.Core.Tests.csproj", "{B3F6A10E-9C2D-4657-8324-5F18B7E5D0A6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "benchmarks", "benchmarks", "{4788B80A-33D8-490E-9BF4-BE3FDFC4E127}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StringZIlla.Core.Benchmarks", "benchmarks\StringZilla.Core.Benchmarks\StringZIlla.Core.Benchmarks.csproj", "{3624D194-94C3-40CD-A193-40E593EFB835}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{424C1CE4-68A8-46E8-B2E3-8F88165E5C72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{424C1CE4-68A8-46E8-B2E3-8F88165E5C72}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{424C1CE4-68A8-46E8-B2E3-8F88165E5C72}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{424C1CE4-68A8-46E8-B2E3-8F88165E5C72}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3F6A10E-9C2D-4657-8324-5F18B7E5D0A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3F6A10E-9C2D-4657-8324-5F18B7E5D0A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3F6A10E-9C2D-4657-8324-5F18B7E5D0A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3F6A10E-9C2D-4657-8324-5F18B7E5D0A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3624D194-94C3-40CD-A193-40E593EFB835}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3624D194-94C3-40CD-A193-40E593EFB835}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3624D194-94C3-40CD-A193-40E593EFB835}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3624D194-94C3-40CD-A193-40E593EFB835}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{424C1CE4-68A8-46E8-B2E3-8F88165E5C72} = {C39E5D7C-1562-4593-A5A0-8527286D1BF7}
+		{B3F6A10E-9C2D-4657-8324-5F18B7E5D0A6} = {2DE87239-BCE9-4F95-9E81-0D2B696E1E06}
+		{3624D194-94C3-40CD-A193-40E593EFB835} = {4788B80A-33D8-490E-9BF4-BE3FDFC4E127}
+	EndGlobalSection
+EndGlobal
