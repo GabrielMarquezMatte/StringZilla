@@ -1,3 +1,3 @@
-﻿using StringZilla.Core.Benchmark.Utilities;
+﻿using StringZIlla.Core.Benchmarks.Utilities;
 
-BenchmarkDotNet.Running.BenchmarkRunner.Run<BytePtrUtilitiesBenchmark>();
+BenchmarkDotNet.Running.BenchmarkRunner.Run<Avx2UtilitiesBenchmark>();

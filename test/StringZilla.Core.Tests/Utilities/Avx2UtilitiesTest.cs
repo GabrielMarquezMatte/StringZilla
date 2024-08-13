@@ -3,48 +3,48 @@ using StringZilla.Core.Utilities;
 
 namespace StringZilla.Core.Tests.Utilities
 {
-    public sealed class BytePtrUtilitiesTest
+    public sealed class Avx2UtilitiesTest
     {
         [Fact]
         public unsafe void FillAvx2()
         {
-            byte* output = stackalloc byte[32];
-            BytePtrUtilities.FillAvx2(output, 32, 0x12);
-            for (int i = 0; i < 32; i++)
+            Span<byte> output = stackalloc byte[32];
+            Avx2Utilities.FillAvx2(output, 0x12);
+            foreach (ref readonly var item in output)
             {
-                Assert.Equal(0x12, output[i]);
+                Assert.Equal(0x12, item);
             }
         }
 
         [Fact]
         public unsafe void FindByteAvx2_Found()
         {
-            byte* input = stackalloc byte[32];
+            Span<byte> input = stackalloc byte[32];
             for (int i = 0; i < 32; i++)
             {
                 input[i] = (byte)i;
             }
-            int index = BytePtrUtilities.FindByteAvx2(input, 32, 0x12);
+            int index = Avx2Utilities.FindByteAvx2(input, 0x12);
             Assert.Equal(0x12, index);
         }
 
         [Fact]
         public unsafe void FindByteAvx2_NotFound()
         {
-            byte* input = stackalloc byte[32];
+            Span<byte> input = stackalloc byte[32];
             for (int i = 0; i < 32; i++)
             {
                 input[i] = (byte)i;
             }
-            int index = BytePtrUtilities.FindByteAvx2(input, 32, 0x33);
+            int index = Avx2Utilities.FindByteAvx2(input, 0x33);
             Assert.Equal(-1, index);
         }
 
         [Fact]
         public unsafe void FindAvx2_Found()
         {
-            byte* input = stackalloc byte[32];
-            byte* compare = stackalloc byte[3];
+            Span<byte> input = stackalloc byte[32];
+            Span<byte> compare = stackalloc byte[3];
             for (int i = 0; i < 32; i++)
             {
                 input[i] = (byte)i;
@@ -52,15 +52,15 @@ namespace StringZilla.Core.Tests.Utilities
             compare[0] = 0x12;
             compare[1] = 0x13;
             compare[2] = 0x14;
-            int index = BytePtrUtilities.FindAvx2(input, 32, compare, 3);
+            int index = Avx2Utilities.FindAvx2(input, compare);
             Assert.Equal(0x12, index);
         }
 
         [Fact]
         public unsafe void FindAvx2_NotFound()
         {
-            byte* input = stackalloc byte[32];
-            byte* compare = stackalloc byte[3];
+            Span<byte> input = stackalloc byte[32];
+            Span<byte> compare = stackalloc byte[3];
             for (int i = 0; i < 32; i++)
             {
                 input[i] = (byte)i;
@@ -68,21 +68,15 @@ namespace StringZilla.Core.Tests.Utilities
             compare[0] = 0x12;
             compare[1] = 0x34;
             compare[2] = 0x56;
-            int index = BytePtrUtilities.FindAvx2(input, 32, compare, 3);
+            int index = Avx2Utilities.FindAvx2(input, compare);
             Assert.Equal(-1, index);
         }
 
         private static unsafe void TestFindAvx2(ReadOnlySpan<byte> input, ReadOnlySpan<byte> compare)
         {
-            fixed (byte* inputPtr = input)
-            {
-                fixed (byte* comparePtr = compare)
-                {
-                    int index = BytePtrUtilities.FindAvx2(inputPtr, input.Length, comparePtr, compare.Length);
-                    int index1 = BytePtrUtilities.FindSerial(inputPtr, input.Length, comparePtr, compare.Length);
-                    Assert.Equal(index1, index);
-                }
-            }
+            int index = Avx2Utilities.FindAvx2(input, compare);
+            int index1 = input.IndexOf(compare);
+            Assert.Equal(index1, index);
         }
 
         [Fact]
