@@ -8,38 +8,40 @@ namespace StringZilla.Core.Benchmarks.Utilities
         [Benchmark]
         public unsafe void FillAvx2Benchmark()
         {
-            Span<byte> output = stackalloc byte[1024];
+            Span<byte> output = stackalloc byte[256];
             Avx2Utilities.FillAvx2(output, 0x42);
         }
         [Benchmark]
         public unsafe void FillSerialBenchmark()
         {
-            foreach (ref var item in (stackalloc byte[1024]))
+            foreach (ref var item in (stackalloc byte[256]))
             {
                 item = 0x42;
             }
         }
+        private static Span<byte> CreateSpan(Span<byte> output)
+        {
+            for (int i = 0; i < output.Length; i++)
+            {
+                output[i] = (byte)(i % 256);
+            }
+            return output;
+        }
         [Benchmark]
         public int FindByteAvx2Benchmark()
         {
-            Span<byte> input = stackalloc byte[1024];
-            for (int i = 0; i < 1024; i++)
-            {
-                input[i] = (byte)i;
-            }
-            return Avx2Utilities.FindByteAvx2(input, input[1023]);
+            Span<byte> input = stackalloc byte[256];
+            input = CreateSpan(input);
+            return Avx2Utilities.FindByteAvx2(input, 255);
         }
         [Benchmark]
         public int FindByteSerialBenchmark()
         {
-            Span<byte> input = stackalloc byte[1024];
-            for (int i = 0; i < 1024; i++)
+            Span<byte> input = stackalloc byte[256];
+            input = CreateSpan(input);
+            for (int i = 0; i < input.Length; i++)
             {
-                input[i] = (byte)i;
-            }
-            for (int i = 0; i < 1024; i++)
-            {
-                if (input[i] == input[1023])
+                if (input[i] == 255)
                 {
                     return i;
                 }
@@ -49,22 +51,16 @@ namespace StringZilla.Core.Benchmarks.Utilities
         [Benchmark]
         public int FindAvx2Benchmark()
         {
-            Span<byte> input = stackalloc byte[1024];
-            for (int i = 0; i < 1024; i++)
-            {
-                input[i] = (byte)i;
-            }
+            Span<byte> input = stackalloc byte[256];
+            input = CreateSpan(input);
             ReadOnlySpan<byte> value = input[^16..];
             return Avx2Utilities.FindAvx2(input, value);
         }
         [Benchmark]
         public int FindSerialBenchmark()
         {
-            Span<byte> input = stackalloc byte[1024];
-            for (int i = 0; i < 1024; i++)
-            {
-                input[i] = (byte)i;
-            }
+            Span<byte> input = stackalloc byte[256];
+            input = CreateSpan(input);
             ReadOnlySpan<byte> value = input[^16..];
             return input.IndexOf(value);
         }
