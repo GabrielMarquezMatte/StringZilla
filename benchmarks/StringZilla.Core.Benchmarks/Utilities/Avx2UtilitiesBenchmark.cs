@@ -1,7 +1,7 @@
 using BenchmarkDotNet.Attributes;
 using StringZilla.Core.Utilities;
 
-namespace StringZIlla.Core.Benchmarks.Utilities
+namespace StringZilla.Core.Benchmarks.Utilities
 {
     public class Avx2UtilitiesBenchmark
     {
@@ -14,14 +14,13 @@ namespace StringZIlla.Core.Benchmarks.Utilities
         [Benchmark]
         public unsafe void FillSerialBenchmark()
         {
-            Span<byte> output = stackalloc byte[1024];
-            foreach(ref var item in output)
+            foreach (ref var item in (stackalloc byte[1024]))
             {
                 item = 0x42;
             }
         }
         [Benchmark]
-        public unsafe int FindByteAvx2Benchmark()
+        public int FindByteAvx2Benchmark()
         {
             Span<byte> input = stackalloc byte[1024];
             for (int i = 0; i < 1024; i++)
@@ -31,7 +30,7 @@ namespace StringZIlla.Core.Benchmarks.Utilities
             return Avx2Utilities.FindByteAvx2(input, input[1023]);
         }
         [Benchmark]
-        public unsafe int FindByteSerialBenchmark()
+        public int FindByteSerialBenchmark()
         {
             Span<byte> input = stackalloc byte[1024];
             for (int i = 0; i < 1024; i++)
@@ -46,6 +45,28 @@ namespace StringZIlla.Core.Benchmarks.Utilities
                 }
             }
             return -1;
+        }
+        [Benchmark]
+        public int FindAvx2Benchmark()
+        {
+            Span<byte> input = stackalloc byte[1024];
+            for (int i = 0; i < 1024; i++)
+            {
+                input[i] = (byte)i;
+            }
+            ReadOnlySpan<byte> value = input[^16..];
+            return Avx2Utilities.FindAvx2(input, value);
+        }
+        [Benchmark]
+        public int FindSerialBenchmark()
+        {
+            Span<byte> input = stackalloc byte[1024];
+            for (int i = 0; i < 1024; i++)
+            {
+                input[i] = (byte)i;
+            }
+            ReadOnlySpan<byte> value = input[^16..];
+            return input.IndexOf(value);
         }
     }
 }

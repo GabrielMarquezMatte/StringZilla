@@ -1,3 +1,4 @@
-﻿using StringZIlla.Core.Benchmarks.Utilities;
+﻿using BenchmarkDotNet.Running;
+using StringZilla.Core.Benchmarks.Utilities;
 
-BenchmarkDotNet.Running.BenchmarkRunner.Run<Avx2UtilitiesBenchmark>();
+BenchmarkRunner.Run<Avx2UtilitiesBenchmark>();

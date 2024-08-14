@@ -15,16 +15,11 @@ namespace StringZilla.Core.Utilities
         public static unsafe void FillAvx2(Span<byte> output, byte value)
         {
             Vector256<byte> valueVector = Vector256.Create(value);
-            int length = output.Length;
             int count = Vector256<byte>.Count;
-            while (length >= count)
+            while (output.Length >= count)
             {
-                fixed (byte* bytePtr = output)
-                {
-                    Avx.StoreAligned(bytePtr, valueVector);
-                    output = output[count..];
-                    length -= count;
-                }
+                valueVector.CopyTo(output);
+                output = output[count..];
             }
             foreach (ref byte outputByte in output)
             {
@@ -35,17 +30,27 @@ namespace StringZilla.Core.Utilities
         {
             Vector256<byte> valueVector = Vector256.Create(value);
             int count = Vector256<byte>.Count;
+            int index = 0;
             while (input.Length >= count)
             {
                 Vector256<byte> inputVector = Vector256.Create(input);
-                int mask = Avx2.MoveMask(Avx2.CompareEqual(inputVector, valueVector));
+                Vector256<byte> result = Avx2.CompareEqual(inputVector, valueVector);
+                var mask = Avx2.MoveMask(result);
                 if (mask != 0)
                 {
-                    return BitOperations.TrailingZeroCount((uint)mask);
+                    return index + BitOperations.TrailingZeroCount(mask);
                 }
                 input = input[count..];
+                index += count;
             }
-            return input.IndexOf(value);
+            for (int i = 0; i < input.Length; i++)
+            {
+                if (input[i] == value)
+                {
+                    return index + i;
+                }
+            }
+            return -1;
         }
         private static void LocateNeedleAnomalies(ReadOnlySpan<byte> value, out int offsetFirst, out int offsetMid, out int offsetLast)
         {
@@ -105,27 +110,51 @@ namespace StringZilla.Core.Utilities
             Vector256<byte> valueMidVector = Vector256.Create(value[offsetMid]);
             Vector256<byte> valueLastVector = Vector256.Create(value[offsetLast]);
             int count = Vector256<byte>.Count;
+            int indexCount = 0;
             while (input.Length >= count)
             {
-                Vector256<byte> inputFirstVector = Vector256.Create(input[offsetFirst..]);
-                Vector256<byte> inputMidVector = Vector256.Create(input[offsetMid..]);
-                Vector256<byte> inputLastVector = Vector256.Create(input[offsetLast..]);
-                int matches = BitOperations.TrailingZeroCount(
-                    (uint)(Avx2.MoveMask(Avx2.CompareEqual(inputFirstVector, valueFirstVector)) &
-                    Avx2.MoveMask(Avx2.CompareEqual(inputMidVector, valueMidVector)) &
-                    Avx2.MoveMask(Avx2.CompareEqual(inputLastVector, valueLastVector))));
-                while (matches != 0)
+                Vector256<byte> inputVector = Vector256.Create(input);
+                int maskFirst = Avx2.MoveMask(Avx2.CompareEqual(inputVector, valueFirstVector));
+                if (maskFirst != 0)
                 {
-                    int index = BitOperations.TrailingZeroCount((uint)matches);
-                    if (Equal(input[index..], value))
+                    int index = BitOperations.TrailingZeroCount(maskFirst);
+                    if (input[index..].StartsWith(value))
                     {
-                        return index;
+                        indexCount += index;
+                        return indexCount;
                     }
-                    matches &= matches - 1;
+                }
+                int maskMid = Avx2.MoveMask(Avx2.CompareEqual(inputVector, valueMidVector));
+                if (maskMid != 0)
+                {
+                    int index = BitOperations.TrailingZeroCount(maskMid);
+                    if (input[index..].StartsWith(value))
+                    {
+                        indexCount += index;
+                        return indexCount;
+                    }
+                }
+                int maskLast = Avx2.MoveMask(Avx2.CompareEqual(inputVector, valueLastVector));
+                if (maskLast != 0)
+                {
+                    int index = BitOperations.TrailingZeroCount(maskLast);
+                    if (input[index..].StartsWith(value))
+                    {
+                        indexCount += index;
+                        return indexCount;
+                    }
                 }
                 input = input[count..];
+                indexCount += count;
             }
-            return input.IndexOf(value);
+            for (int i = 0; i < input.Length; i++)
+            {
+                if (input[i] == value[0] && input[i..].StartsWith(value))
+                {
+                    return indexCount + i;
+                }
+            }
+            return -1;
         }
     }
 }
